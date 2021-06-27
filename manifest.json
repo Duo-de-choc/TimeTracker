@@ -1,0 +1,10 @@
+{
+    "name": "TimeTracker",
+    "version": "0.1", 
+    "description": "Tracking your work time",
+    "manifest_version": 2,
+    "browser_action": {
+        "default_icon": "Icons/Chrome_icone_2.jpeg",  
+        "default_title": "TimeTracker" 
+    }
+}
