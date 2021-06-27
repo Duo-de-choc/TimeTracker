@@ -1,0 +1,16 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    font-family: "Open Sans", sans-serif;
+}
+
+h1 {
+    background: #4A00E0;
+    background: linear-gradient(to top, #4A00E0 0%, #8E2DE2 100%);
+    background-size:cover;
+    padding: 10px;
+    width: 300px;
+    text-align: center;
+    color: rgb(255, 255, 255);
+}

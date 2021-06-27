@@ -1,10 +1,14 @@
 {
+    "manifest_version": 2,
+
     "name": "TimeTracker",
     "version": "0.1", 
     "description": "Tracking your work time",
-    "manifest_version": 2,
+    "author": "Patrick ARLT" ,
+
     "browser_action": {
         "default_icon": "Icons/Chrome_icone_2.jpeg",  
-        "default_title": "TimeTracker" 
+        "default_title": "TimeTracker",
+        "default_popup": "popup.html"
     }
 }
