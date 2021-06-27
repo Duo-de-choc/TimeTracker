@@ -1,2 +1,4 @@
 # TimeTracker
-Chrome extension to track working time
+
+Chrome extension to track working time!
+
