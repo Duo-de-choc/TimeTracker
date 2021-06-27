@@ -10,5 +10,7 @@
         "default_icon": "Icons/Chrome_icone_2.jpeg",  
         "default_title": "TimeTracker",
         "default_popup": "popup.html"
-    }
+    },
+
+    "permissions": ["storage"]
 }
