@@ -2,15 +2,18 @@
     "manifest_version": 2,
 
     "name": "TimeTracker",
-    "version": "0.1", 
+    "version": "0.1",
     "description": "Tracking your work time",
     "author": "Patrick ARLT" ,
 
     "browser_action": {
-        "default_icon": "Icons/Chrome_icone_2.jpeg",  
+        "default_icon": "Icons/Chrome_icone_2.jpeg",
         "default_title": "TimeTracker",
         "default_popup": "popup.html"
     },
+    "background": {
+  "service_worker": "calcul.js"
+},
 
     "permissions": ["storage"]
 }
