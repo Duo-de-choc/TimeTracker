@@ -12,7 +12,7 @@ const projects = {
 };
 
 // Add project
-function addProject(){
+function addProject(title){
 
     // Create ID
     let ID;
@@ -59,3 +59,12 @@ function deleteData(ID) {
 function testing() {
     console.log(projects);
 }
+
+const btnAddProj2 = document.getElementById("buttonAddProject2");
+btnAddProj2.addEventListener("click", function(e) {
+    e.preventDefault(); // Prevent from reload
+
+    var title = document.getElementById("buttonAddProject").value;
+    addProject(title);
+
+});
