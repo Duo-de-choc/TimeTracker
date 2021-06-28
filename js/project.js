@@ -62,8 +62,6 @@ function testing() {
 
 const btnAddProj2 = document.getElementById("buttonAddProject2");
 btnAddProj2.addEventListener("click", function(e) {
-    e.preventDefault(); // Prevent from reload
-
     var title = document.getElementById("buttonAddProject").value;
     addProject(title);
 
