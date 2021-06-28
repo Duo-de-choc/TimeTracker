@@ -6,4 +6,6 @@ function change(){ // no ';' here
         elem.type = "text";
         elem.value = ""
     }
+    var elem = document.getElementById("buttonAddProject2");
+    elem.type = "submit"
 }
