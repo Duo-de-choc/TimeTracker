@@ -26,6 +26,37 @@ function dispTime(time) {
   return time_in_text;
 }
 
-// get the click
-const el = document.getElementById("buttonAddProject");
-el.addEventListener("click", createTimer);
+// get the click on add proj and set the div part with timer
+const btn_add_proj = document.getElementById("buttonAddProject");
+btn_add_proj.addEventListener("click", function(e) {
+  e.preventDefault(); // Prevent from reload
+
+  // delete old timer
+  var project = document.getElementById("project");
+  while (project.lastElementChild) {
+    project.removeChild(project.lastElementChild);
+  }
+
+
+  // modify the div project
+  var new_proj = document.createElement("p");
+  var text = document.createTextNode("New Project");
+  new_proj.appendChild(text);
+
+  var new_input_timer = document.createElement("input");
+  new_input_timer.setAttribute("type", "submit");
+  new_input_timer.setAttribute("value", "Start Timer");
+  new_input_timer.setAttribute("id", "buttonStartTimer");
+
+  var new_timer = document.createElement("div");
+  new_timer.setAttribute("id", "timer");
+
+  project.appendChild(new_proj);
+  project.appendChild(new_input_timer);
+  project.appendChild(new_timer);
+
+
+  // set the event for the timer
+  const el = document.getElementById("buttonStartTimer");
+  el.addEventListener("click", createTimer);
+});
