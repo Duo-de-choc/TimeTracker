@@ -143,6 +143,7 @@ btnAddProj2.addEventListener("click", function(event) {
             });
         });
     }
+    document.getElementById("buttonAddProject").value = "";
 });
 
 // Deletion all projects
