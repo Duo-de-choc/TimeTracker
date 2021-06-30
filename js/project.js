@@ -64,7 +64,7 @@ function deleteData(ID) {
 
 }
 
-function clearAllProjects(){
+function deleteAllProjects(){
     projects.allProjects = [];
     // Saving projects
     chrome.storage.sync.set({'projects': projects}, function() {
@@ -100,7 +100,6 @@ function addProjectToUI(obj) {
 // Affichage des projet qui existent deja lorsqu'on ouvre l'extension
 function initProjectDisplay(){
     chrome.storage.sync.get(['projects'], function(result) {
-        console.log('TEST Number of project init :' + result.projects.allProjects.length);
         if(result.projects.allProjects.length !== 0){
             for(let i = 0; i<result.projects.allProjects.length; i++){
                 var proj_tmp = result.projects.allProjects[i];
@@ -114,7 +113,6 @@ function initProjectDisplay(){
 // ------------------------------------------------ //
 //             BEGINING OF THE CODE                 //
 // ------------------------------------------------ //
-clearAllProjects();
 
 initProjectDisplay();
 
@@ -123,6 +121,7 @@ chrome.storage.sync.get(['projects'], function(result) {
     console.log('Number of project init :' + result.projects.allProjects.length);
 });
 
+// Function to add a project
 const btnAddProj2 = document.getElementById("buttonAddProject2");
 btnAddProj2.addEventListener("click", function(event) {
     // Prevent default behavior
@@ -145,3 +144,6 @@ btnAddProj2.addEventListener("click", function(event) {
         });
     }
 });
+
+// Deletion all projects
+document.getElementById("deleteAllProject").addEventListener("click", deleteAllProjects)
