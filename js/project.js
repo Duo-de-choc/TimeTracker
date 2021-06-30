@@ -1,10 +1,13 @@
 console.log('background project running');
-
 // Project class
 class Project {
     constructor(id, title) {
         this.id = id;
         this.title = title;
+        this.days = 0;
+        this.hours = 0;
+        this.minutes = 0;
+        this.seconds = 0;
     }
 }
 
@@ -13,15 +16,10 @@ const projects = {
     allProjects: []
 };
 
-// Get the element classes
-const DOMstrings = {
-    projectForm: '.project-form',
-    inputValue: 'input[type="text"]',
-    projectList: '.projects',
-    hoursSpan: '.hours',
-    minutesSpan: '.minutes',
-    secondsSpan: '.seconds'
-};
+// Saving projects
+chrome.storage.sync.set({'projects': projects}, function() {
+    console.log('projects is set to ' + projects.allProjects.length);
+});
 
 // Add project
 function addProject(title){
@@ -89,9 +87,14 @@ function addProjectToUI(obj) {
     `;
 
     // Insert the HTML into the DOM
-    document.querySelector(DOMstrings.projectList).insertAdjacentHTML('beforeend', html);
-
+    // document.querySelector(projects).insertAdjacentHTML('beforeend', html);
 }
+
+
+// ------------------------------------------------ //
+//             BEGINING OF THE CODE                 //
+// ------------------------------------------------ //
+
 
 const btnAddProj2 = document.getElementById("buttonAddProject2");
 btnAddProj2.addEventListener("click", function(event) {
@@ -105,6 +108,15 @@ btnAddProj2.addEventListener("click", function(event) {
         
         // Add the project to the data controller
         const newProject = addProject(title);
+
+        chrome.storage.sync.get(['projects'], function(result) {
+            console.log('Number of project before adding :' + result.projects.allProjects.length);
+
+            // Saving projects
+            chrome.storage.sync.set({'projects': projects}, function() {
+                console.log('projects is set to : project ID : ' + projects.allProjects[projects.allProjects.length-1].id + "; project title : " + projects.allProjects[projects.allProjects.length-1].title);
+            });
+        });
 
         // Add the project to the UI
         addProjectToUI(newProject);
