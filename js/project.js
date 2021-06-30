@@ -47,18 +47,27 @@ function addProject(title) {
 
 // Update project title in data structure
 function updateTitle(newTitle, ID) {
+    let oldTitle = projects.allProjects.find(project => project.id === ID).title;
+    
+    projects.allProjects.find(project => project.id === ID).title = newTitle;
 
-    // Find the object with matching ID
-    const projectToUpdate = projects.allProjects.find(project => project.id === ID);
-
-    // Update the title
-    projectToUpdate.title = newTitle;
-
+    // Saving projects
+    chrome.storage.sync.set({'projects': projects}, function () {
+        console.log('Changing the title of the project : old title : ' + oldTitle + "; new title : " + newTitle);
+    });
 }
 
 // Delete a project from data structure
 function deleteProject(ID) {
-    
+    let index = projects.allProjects.find(project => project.id === ID).index;
+    let title = projects.allProjects.find(project => project.id === ID).title;
+
+    projects.allProjects.splice(index, 1);
+
+    // Saving projects
+    chrome.storage.sync.set({'projects': projects}, function () {
+        console.log('Deleting project : ' + title);
+    });
 }
 
 function deleteAllProjects() {
