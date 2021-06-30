@@ -1,9 +1,6 @@
 console.log('background header running');
 
-const btnAddProject = document.getElementById("buttonAddProject")
-if (btnAddProject){
-    btnAddProject.addEventListener("click", change);
-}
+document.getElementById("buttonAddProject").addEventListener("click", change);
 
 function change(){ 
     var elem = document.getElementById("buttonAddProject");
