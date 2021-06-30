@@ -27,6 +27,8 @@ function addProject(title){
             ID = result.projects.allProjects[result.projects.allProjects.length - 1].id + 1;
         }
 
+        projects.allProjects = result.projects.allProjects;
+
         // Create a new instance
         const newProject = new Project(ID, title);
 
@@ -92,15 +94,31 @@ function addProjectToUI(obj) {
     `;
 
     // Insert the HTML into the DOM
-    // document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
+    document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
+}
+
+// Affichage des projet qui existent deja lorsqu'on ouvre l'extension
+function initProjectDisplay(){
+    chrome.storage.sync.get(['projects'], function(result) {
+        console.log('TEST Number of project init :' + result.projects.allProjects.length);
+        if(result.projects.allProjects.length !== 0){
+            for(let i = 0; i<result.projects.allProjects.length; i++){
+                var proj_tmp = result.projects.allProjects[i];
+                addProjectToUI(proj_tmp);
+            }
+        }
+    })
 }
 
 
 // ------------------------------------------------ //
 //             BEGINING OF THE CODE                 //
 // ------------------------------------------------ //
-//clearAllProjects()
+clearAllProjects();
 
+initProjectDisplay();
+
+// debugging print
 chrome.storage.sync.get(['projects'], function(result) {
     console.log('Number of project init :' + result.projects.allProjects.length);
 });
