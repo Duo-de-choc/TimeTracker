@@ -15,6 +15,11 @@ class Project {
 const projects = {
     allProjects: []
 };
+chrome.storage.sync.get(['projects'], function (result) {
+    if (result.projects.allProjects.length !== 0) {
+        projects.allProjects = result.projects.allProjects;
+    }
+});
 
 // Add project
 function addProject(title) {
@@ -26,8 +31,6 @@ function addProject(title) {
         if (result.projects.allProjects.length !== 0) {
             ID = result.projects.allProjects[result.projects.allProjects.length - 1].id + 1;
         }
-
-        projects.allProjects = result.projects.allProjects;
 
         // Create a new instance
         const newProject = new Project(ID, title);
@@ -44,32 +47,33 @@ function addProject(title) {
 
 // Update project title in data structure
 function updateTitle(newTitle, ID) {
+    let oldTitle = projects.allProjects.find(project => project.id === ID).title;
+    
+    projects.allProjects.find(project => project.id === ID).title = newTitle;
 
-    // Find the object with matching ID
-    const projectToUpdate = projects.allProjects.find(project => project.id === ID);
-
-    // Update the title
-    projectToUpdate.title = newTitle;
-
+    // Saving projects
+    chrome.storage.sync.set({'projects': projects}, function () {
+        console.log('Changing the title of the project : old title : ' + oldTitle + "; new title : " + newTitle);
+    });
 }
 
 // Delete a project from data structure
-function deleteData(ID) {
+function deleteProject(ID) {
+    let index = projects.allProjects.find(project => project.id === ID).index;
+    let title = projects.allProjects.find(project => project.id === ID).title;
 
-    const currentProject = projects.allProjects.map(current => current.id);
-    const index = currentProject.indexOf(ID);
-    if (index !== -1) {
-        projects.allProjects.splice(index, 1);
-    }
+    projects.allProjects.splice(index, 1);
 
+    // Saving projects
+    chrome.storage.sync.set({'projects': projects}, function () {
+        console.log('Deleting project : ' + title);
+    });
 }
 
 function deleteAllProjects() {
     projects.allProjects = [];
     // Saving projects
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function () {
+    chrome.storage.sync.set({'projects': projects}, function () {
         console.log('Clearing all projects : size : ' + projects.allProjects.length);
     });
 }
@@ -114,7 +118,7 @@ function initProjectDisplay() {
 }
 
 // ------------------------------------------------ //
-//             DISPLAY FUNCTIONS                    //
+//             TIMER FUNCTIONS                      //
 // ------------------------------------------------ //
 
 var ev;
@@ -184,9 +188,7 @@ btnAddProj2.addEventListener("click", function (event) {
             console.log('Number of project before adding :' + result.projects.allProjects.length);
 
             // Saving projects
-            chrome.storage.sync.set({
-                'projects': projects
-            }, function () {
+            chrome.storage.sync.set({'projects': projects}, function () {
                 console.log('projects is set to : project ID : ' + projects.allProjects[projects.allProjects.length - 1].id + "; project title : " + projects.allProjects[projects.allProjects.length - 1].title);
             });
         });
