@@ -1,3 +1,5 @@
+console.log('background project running');
+
 // Project class
 class Project {
     constructor(id, title) {
@@ -9,6 +11,16 @@ class Project {
 // Project data
 const projects = {
     allProjects: []
+};
+
+// Get the element classes
+const DOMstrings = {
+    projectForm: '.project-form',
+    inputValue: 'input[type="text"]',
+    projectList: '.projects',
+    hoursSpan: '.hours',
+    minutesSpan: '.minutes',
+    secondsSpan: '.seconds'
 };
 
 // Add project
@@ -60,9 +72,41 @@ function testing() {
     console.log(projects);
 }
 
-const btnAddProj2 = document.getElementById("buttonAddProject2");
-btnAddProj2.addEventListener("click", function(e) {
-    var title = document.getElementById("buttonAddProject").value;
-    addProject(title);
+// Add project to UI
+function addProjectToUI(obj) {
 
+    // Create markup
+    const html = `
+    <li id="project-${obj.id}">
+        <h2>${obj.title}</h2>
+        <div class="timer">
+            <p class="timer-label">Total Time Spent</p>
+            <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
+        </div>
+        <button class="btn start">Start</button>
+        <button class="delete-btn"><i class="fa fa-times"></i></button>
+    </li>
+    `;
+
+    // Insert the HTML into the DOM
+    document.querySelector(DOMstrings.projectList).insertAdjacentHTML('beforeend', html);
+
+}
+
+const btnAddProj2 = document.getElementById("buttonAddProject2");
+btnAddProj2.addEventListener("click", function(event) {
+    // Prevent default behavior
+    event.preventDefault();
+
+    var title = document.getElementById("buttonAddProject").value;
+
+    // If the input is not empty
+    if (title !== '') {
+        
+        // Add the project to the data controller
+        const newProject = addProject(title);
+
+        // Add the project to the UI
+        addProjectToUI(newProject);
+    }
 });
