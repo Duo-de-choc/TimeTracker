@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "TimeTracker",
-    "version": "0.1",
+    "version": "0.2",
     "description": "Tracking your work time",
     "author": "Patrick ARLT" ,
 
