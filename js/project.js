@@ -99,7 +99,6 @@ function addProjectToUI(obj) {
             <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
         </div>
         <button class="btn-start" id="btn-start-${obj.id}">Start</button>
-        <button class="delete-btn" id="delete-btn-${obj.id}"><i class="fa fa-times"></i></button>
         <input type="submit" value="Delete Project" id="buttonDeleteProject_${obj.id}">
     </li>
     `;
