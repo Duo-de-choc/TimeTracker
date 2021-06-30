@@ -58,8 +58,12 @@ function updateTitle(newTitle, ID) {
 }
 
 // Delete a project from data structure
-function deleteProject(ID) {
-    let index = projects.allProjects.find(project => project.id === ID).index;
+function deleteProject(event) {
+    const target = event.target;
+    const projectID = target.parentNode.id;
+    const ID = parseInt(target.parentNode.id.slice(8));
+
+    let index = projects.allProjects.findIndex(project => project.id === ID);
     let title = projects.allProjects.find(project => project.id === ID).title;
 
     projects.allProjects.splice(index, 1);
@@ -96,14 +100,21 @@ function addProjectToUI(obj) {
         </div>
         <button class="btn-start" id="btn-start-${obj.id}">Start</button>
         <button class="delete-btn" id="delete-btn-${obj.id}"><i class="fa fa-times"></i></button>
+        <input type="submit" value="Delete Project" id="buttonDeleteProject_${obj.id}">
     </li>
     `;
 
     // Insert the HTML into the DOM
     document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
-    const ev_btn_start = document.getElementById(`btn-start-${obj.id}`);
-    ev_btn_start.addEventListener("click", setTimer);
+
+    // Start timer
+    document.getElementById(`btn-start-${obj.id}`).addEventListener("click", setTimer);
+
+    // Delete a project 
+    document.getElementById(`buttonDeleteProject_${obj.id}`).addEventListener("click", deleteProject)
+
 }
+
 
 // Affichage des projet qui existent deja lorsqu'on ouvre l'extension
 function initProjectDisplay() {
