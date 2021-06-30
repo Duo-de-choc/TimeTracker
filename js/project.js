@@ -15,6 +15,11 @@ class Project {
 const projects = {
     allProjects: []
 };
+chrome.storage.sync.get(['projects'], function (result) {
+    if (result.projects.allProjects.length !== 0) {
+        projects.allProjects = result.projects.allProjects;
+    }
+});
 
 // Add project
 function addProject(title) {
@@ -26,8 +31,6 @@ function addProject(title) {
         if (result.projects.allProjects.length !== 0) {
             ID = result.projects.allProjects[result.projects.allProjects.length - 1].id + 1;
         }
-
-        projects.allProjects = result.projects.allProjects;
 
         // Create a new instance
         const newProject = new Project(ID, title);
@@ -54,22 +57,14 @@ function updateTitle(newTitle, ID) {
 }
 
 // Delete a project from data structure
-function deleteData(ID) {
-
-    const currentProject = projects.allProjects.map(current => current.id);
-    const index = currentProject.indexOf(ID);
-    if (index !== -1) {
-        projects.allProjects.splice(index, 1);
-    }
-
+function deleteProject(ID) {
+    
 }
 
 function deleteAllProjects() {
     projects.allProjects = [];
     // Saving projects
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function () {
+    chrome.storage.sync.set({'projects': projects}, function () {
         console.log('Clearing all projects : size : ' + projects.allProjects.length);
     });
 }
@@ -114,7 +109,7 @@ function initProjectDisplay() {
 }
 
 // ------------------------------------------------ //
-//             DISPLAY FUNCTIONS                    //
+//             TIMER FUNCTIONS                      //
 // ------------------------------------------------ //
 
 var ev;
@@ -184,9 +179,7 @@ btnAddProj2.addEventListener("click", function (event) {
             console.log('Number of project before adding :' + result.projects.allProjects.length);
 
             // Saving projects
-            chrome.storage.sync.set({
-                'projects': projects
-            }, function () {
+            chrome.storage.sync.set({'projects': projects}, function () {
                 console.log('projects is set to : project ID : ' + projects.allProjects[projects.allProjects.length - 1].id + "; project title : " + projects.allProjects[projects.allProjects.length - 1].title);
             });
         });
