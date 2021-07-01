@@ -101,7 +101,7 @@ function addProjectToUI(obj) {
     // Create markup
     const html = `
     <li id="project-${obj.id}">
-        <h2>${obj.title}</h2>
+        <h2 class='title-Proj'>${obj.title}</h2>
         <div class="timer">
             <p class="timer-label">Total Time Spent</p>
             <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
@@ -178,6 +178,15 @@ function stopTimer(event) {
     clearInterval(target.getAttribute('timer-id'));
 }
 
+// Change Title mais pas la bonne font et 
+function changeTitle(event) {
+    const input = document.createElement('input');
+    const title = event.target;
+    const parent = title.parentNode;
+    input.value = title.textContent;
+    parent.insertBefore(input, title);
+    parent.removeChild(title);
+}
 
 
 // ------------------------------------------------ //
@@ -232,6 +241,10 @@ document.addEventListener("click", function(event) {
 
         case 'buttonDeleteProject':
             deleteProject(event);
+            break;
+
+        case 'title-Proj':
+            changeTitle(event);
             break;
 
     }
