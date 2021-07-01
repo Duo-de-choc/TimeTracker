@@ -23,7 +23,6 @@ chrome.storage.sync.get(['projects'], function(result) {
 
 // Add project
 function addProject(title) {
-
     // Getting the ID
     let ID = 0;
 
@@ -62,18 +61,6 @@ function updateTitle(event) {
     });
 }
 
-function saveTime(ID, seconds, minutes, hours) {
-    projects.allProjects.find(project => project.id == ID).seconds = seconds;
-    projects.allProjects.find(project => project.id == ID).minutes = minutes;
-    projects.allProjects.find(project => project.id == ID).hours = hours;
-
-    // Saving projects
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function() {
-        console.log('Changing the time of the project :' + hours + ':' + minutes + ':' + seconds);
-    });
-}
 
 // Delete a project from data structure
 function deleteProject(event) {
@@ -144,11 +131,12 @@ function initProjectDisplay() {
     })
 }
 
+
+
 // ------------------------------------------------ //
 //             TIMER FUNCTIONS                      //
 // ------------------------------------------------ //
 
-var ev;
 // init the Timer where it needs to be
 function setTimer(event) {
     target = event.target;
@@ -196,13 +184,34 @@ function startTimer(event) {
     target.setAttribute('timer-id', intervalID);
 }
 
+
+// save time in project
+function saveTime(ID, seconds, minutes, hours) {
+    projects.allProjects.find(project => project.id == ID).seconds = seconds;
+    projects.allProjects.find(project => project.id == ID).minutes = minutes;
+    projects.allProjects.find(project => project.id == ID).hours = hours;
+
+    // Saving projects
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
+        console.log('Changing the time of the project :' + hours + ':' + minutes + ':' + seconds);
+    });
+}
+
 // Stop the timer
 function stopTimer(event) {
     const target = event.target.previousElementSibling.lastElementChild;
     clearInterval(target.getAttribute('timer-id'));
 }
 
-// Change Title mais pas la bonne font et
+
+
+// ------------------------------------------------ //
+//             Change title                      //
+// ------------------------------------------------ //
+
+// Change Title mais pas la bonne font et ne save pas dans projects
 function changeTitle(event) {
     const input = document.createElement('input');
     const title = event.target;
