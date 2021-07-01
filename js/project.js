@@ -4,10 +4,10 @@ class Project {
     constructor(id, title) {
         this.id = id;
         this.title = title;
-        this.days = 0;
-        this.hours = 0;
-        this.minutes = 0;
-        this.seconds = 0;
+        this.days = "00";
+        this.hours = "00";
+        this.minutes = "00";
+        this.seconds = "00";
     }
 }
 
@@ -106,7 +106,9 @@ function deleteAllProjects() {
 // Testing
 function testing() {
     console.log(projects);
-    console.log(chrome.storage.managed.get('projects');)
+    chrome.storage.sync.get(['projects'], (data) => {
+        console.log(data.projects);
+    });
 }
 
 // Add project to UI
@@ -118,7 +120,7 @@ function addProjectToUI(obj) {
         <h2 class='title-Proj'>${obj.title}</h2>
         <div class="timer">
             <p class="timer-label">Total Time Spent</p>
-            <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
+            <p class="timer-text"><span class="hours">${obj.hours}</span>:<span class="minutes">${obj.minutes}</span>:<span class="seconds">${obj.seconds}</span></p>
         </div>
         <button class="btn-start">Start</button>
         <input type="submit" value="Delete Project" class="buttonDeleteProject">
@@ -164,15 +166,23 @@ function setTimer(event) {
     }
 }
 
+// Start timer and recover the data from chrome
 function startTimer(event) {
     const prj_id = event.target.parentNode.id.slice(8);
     const target = event.target.previousElementSibling.lastElementChild;
+
+    // get time tags
     const seconds = target.querySelector('.seconds');
     const minutes = target.querySelector('.minutes');
     const hours = target.querySelector('.hours');
 
+    // get time values stored in chrome
+    seconds.textContent = projects.allProjects.find(project => project.id == prj_id).seconds;
+    minutes.textContent = projects.allProjects.find(project => project.id == prj_id).minutes;
+    hours.textContent = projects.allProjects.find(project => project.id == prj_id).hours;
 
-    let sec = parseInt(seconds.textContent);
+    // changing time loop with save
+    let sec = parseInt(seconds.textContent) + 60 * parseInt(minutes.textContent) + 3600 * parseInt(hours.textContent);
     intervalID = setInterval(() => {
         sec++;
         seconds.textContent = (`0${sec % 60}`).substr(-2);
