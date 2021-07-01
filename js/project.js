@@ -126,7 +126,6 @@ function initProjectDisplay() {
 //             TIMER FUNCTIONS                      //
 // ------------------------------------------------ //
 
-var ev;
 // init the Timer where it needs to be
 function setTimer(event) {
     target = event.target;
