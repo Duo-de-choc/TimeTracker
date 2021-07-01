@@ -100,16 +100,13 @@ function addProjectToUI(obj) {
             <p class="timer-label">Total Time Spent</p>
             <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
         </div>
-        <button class="btn-start" id="btn-start-${obj.id}">Start</button>
+        <button class="btn-start" id="btn-start">Start</button>
         <input type="submit" value="Delete Project" id="buttonDeleteProject">
     </li>
     `;
 
     // Insert the HTML into the DOM
     document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
-    
-    // Start timer
-    document.getElementById(`btn-start-${obj.id}`).addEventListener("click", setTimer);
 }
 
 
@@ -132,41 +129,49 @@ function initProjectDisplay() {
 var ev;
 // init the Timer where it needs to be
 function setTimer(event) {
-    ev = event.target;
-    var pj_id = event.target.id.substring('btn-start-'.length);
-    if (event.target.getAttribute('class') == 'btn-start') {
-        event.target.setAttribute('class', 'btn-stop');
-        event.target.innerHTML = 'Stop';
+    target = event.target;
 
-        var start = Date.now();
-        dispTime(0, pj_id);
-        window['interval' + pj_id] = setInterval(function () {
-            var delta = Date.now() - start;
-            dispTime(delta, pj_id);
-        }, 1000); // update about every second
-    } else {
-        event.target.setAttribute('class', 'btn-start');
-        event.target.innerHTML = 'Start';
-        clearInterval(window['interval' + pj_id]);
+    // If the button's text is start
+    if (target.textContent === 'Start') {
+        target.textContent = 'Stop';
+        startTimer(event);
+
+        // If the button's text is stop
+    } else if (target.textContent === 'Stop') {
+        target.textContent = 'Start';
+        stopTimer(event);
+
     }
 }
 
-// Display the timer in the right form
-function dispTime(time, pj_id) {
-    var t = Math.floor(time / 1000);
-    var hours = Math.floor(t / 3600);
-    t = t - hours * 3600;
-    var minutes = Math.floor(t / 60);
-    var seconds = t - minutes * 60;
+function startTimer(event) {
 
-    htag = document.getElementById(`project-${pj_id}`).getElementsByClassName("hours")[0];
-    mtag = document.getElementById(`project-${pj_id}`).getElementsByClassName("minutes")[0];
-    stag = document.getElementById(`project-${pj_id}`).getElementsByClassName("seconds")[0];
-    htag.innerHTML = hours;
-    mtag.innerHTML = minutes;
-    stag.innerHTML = seconds;
+    const target = event.target.previousElementSibling.lastElementChild;
+    const seconds = target.querySelector('.seconds');
+    const minutes = target.querySelector('.minutes');
+    const hours = target.querySelector('.hours');
+
+
+    let sec = parseInt(seconds.textContent);
+    intervalID = setInterval(() => {
+        sec++;
+        console.log(sec)
+        seconds.textContent = (`0${sec % 60}`).substr(-2);
+        minutes.textContent = (`0${(parseInt(sec / 60)) % 60}`).substr(-2);
+        hours.textContent = (`0${parseInt(sec / 3600)}`).substr(-2);
+
+        // need to save the data
+    }, 1000);
+
+    // Add interval ID to event target as an attribute
+    target.setAttribute('timer-id', intervalID);
 }
 
+// Stop the timer
+function stopTimer(event) {
+    const target = event.target.previousElementSibling.lastElementChild;
+    clearInterval(target.getAttribute('timer-id'));
+}
 
 // ------------------------------------------------ //
 //             BEGINING OF THE CODE                 //
@@ -210,6 +215,8 @@ document.addEventListener("click",function(event){
         switch(event.target.id){
             case 'buttonDeleteProject' :
                 deleteProject(event);
+            case 'btn-start' :
+                setTimer(event);
         }
     }
 });
