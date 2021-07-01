@@ -107,7 +107,7 @@ function addProjectToUI(obj) {
             <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
         </div>
         <button class="btn-start" id="btn-start-${obj.id}">Start</button>
-        <input type="submit" value="Delete Project" id="buttonDeleteProject">
+        <input type="submit" value="Delete Project" class="buttonDeleteProject">
     </li>
     `;
 
@@ -161,7 +161,6 @@ function startTimer(event) {
     let sec = parseInt(seconds.textContent);
     intervalID = setInterval(() => {
         sec++;
-        console.log(sec)
         seconds.textContent = (`0${sec % 60}`).substr(-2);
         minutes.textContent = (`0${(parseInt(sec / 60)) % 60}`).substr(-2);
         hours.textContent = (`0${parseInt(sec / 3600)}`).substr(-2);
@@ -222,18 +221,18 @@ btnAddProj2.addEventListener("click", function(event) {
 // Function addEventListener for each project (delete proj, update, startTimer)
 document.addEventListener("click", function(event) {
     const target = event.target;
-    if (target) {
-        switch (target.id) {
-
-            // changer delete project car ID 
-            case 'buttonDeleteProject':
-                deleteProject(event);
-
-            case 'deleteAllProject':
-                deleteAllProjects(event);
-        }
-        if (target.className === 'btn-start' || target.className === 'btn-start stop') {
+    switch (target.className) {
+        case 'btn-start':
             setTimer(event);
-        }
+        case 'btn-start stop':
+            setTimer(event);
+        case 'buttonDeleteProject':
+            deleteProject(event);
+
+    }
+
+    switch (target.id) {
+        case 'deleteAllProject':
+            deleteAllProjects(event);
     }
 });
