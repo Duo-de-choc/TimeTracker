@@ -46,7 +46,10 @@ function addProject(title) {
 }
 
 // Update project title in data structure
-function updateTitle(newTitle, ID) {
+function updateTitle(event) {
+    const target = event.target;
+    const ID = parseInt(target.parentNode.id.slice(8));
+
     let oldTitle = projects.allProjects.find(project => project.id === ID).title;
     
     projects.allProjects.find(project => project.id === ID).title = newTitle;
@@ -60,7 +63,6 @@ function updateTitle(newTitle, ID) {
 // Delete a project from data structure
 function deleteProject(event) {
     const target = event.target;
-    const projectID = target.parentNode.id;
     const ID = parseInt(target.parentNode.id.slice(8));
 
     let index = projects.allProjects.findIndex(project => project.id === ID);
@@ -99,19 +101,15 @@ function addProjectToUI(obj) {
             <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
         </div>
         <button class="btn-start" id="btn-start-${obj.id}">Start</button>
-        <input type="submit" value="Delete Project" id="buttonDeleteProject_${obj.id}">
+        <input type="submit" value="Delete Project" id="buttonDeleteProject">
     </li>
     `;
 
     // Insert the HTML into the DOM
     document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
-
+    
     // Start timer
     document.getElementById(`btn-start-${obj.id}`).addEventListener("click", setTimer);
-
-    // Delete a project 
-    document.getElementById(`buttonDeleteProject_${obj.id}`).addEventListener("click", deleteProject)
-
 }
 
 
@@ -204,6 +202,16 @@ btnAddProj2.addEventListener("click", function (event) {
         });
     }
     document.getElementById("buttonAddProject").value = "";
+});
+
+// Function addEventListener for each project (delete proj, update, startTimer)
+document.addEventListener("click",function(event){
+    if(event.target){
+        switch(event.target.id){
+            case 'buttonDeleteProject' :
+                deleteProject(event);
+        }
+    }
 });
 
 // Deletion all projects
