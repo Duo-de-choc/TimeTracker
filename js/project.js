@@ -62,6 +62,19 @@ function updateTitle(event) {
     });
 }
 
+function saveTime(ID, seconds, minutes, hours) {
+    projects.allProjects.find(project => project.id == ID).seconds = seconds;
+    projects.allProjects.find(project => project.id == ID).minutes = minutes;
+    projects.allProjects.find(project => project.id == ID).hours = hours;
+
+    // Saving projects
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
+        console.log('Changing the time of the project :' + hours + ':' + minutes + ':' + seconds);
+    });
+}
+
 // Delete a project from data structure
 function deleteProject(event) {
     const target = event.target;
@@ -93,6 +106,7 @@ function deleteAllProjects() {
 // Testing
 function testing() {
     console.log(projects);
+    console.log(chrome.storage.managed.get('projects');)
 }
 
 // Add project to UI
@@ -151,7 +165,7 @@ function setTimer(event) {
 }
 
 function startTimer(event) {
-
+    const prj_id = event.target.parentNode.id.slice(8);
     const target = event.target.previousElementSibling.lastElementChild;
     const seconds = target.querySelector('.seconds');
     const minutes = target.querySelector('.minutes');
@@ -165,7 +179,7 @@ function startTimer(event) {
         minutes.textContent = (`0${(parseInt(sec / 60)) % 60}`).substr(-2);
         hours.textContent = (`0${parseInt(sec / 3600)}`).substr(-2);
 
-        // need to save the data
+        saveTime(prj_id, seconds.textContent, minutes.textContent, hours.textContent);
     }, 1000);
 
     // Add interval ID to event target as an attribute
@@ -178,7 +192,7 @@ function stopTimer(event) {
     clearInterval(target.getAttribute('timer-id'));
 }
 
-// Change Title mais pas la bonne font et 
+// Change Title mais pas la bonne font et
 function changeTitle(event) {
     const input = document.createElement('input');
     const title = event.target;
@@ -186,6 +200,17 @@ function changeTitle(event) {
     input.value = title.textContent;
     parent.insertBefore(input, title);
     parent.removeChild(title);
+
+}
+
+
+// To use if wanted to shorten the code
+function saveProjectsToChrome(projects) {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
+        console.log('Projects saved');
+    });
 }
 
 
