@@ -106,7 +106,7 @@ function addProjectToUI(obj) {
             <p class="timer-label">Total Time Spent</p>
             <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
         </div>
-        <button class="btn-start" id="btn-start-${obj.id}">Start</button>
+        <button class="btn-start">Start</button>
         <input type="submit" value="Delete Project" class="buttonDeleteProject">
     </li>
     `;
@@ -224,10 +224,15 @@ document.addEventListener("click", function(event) {
     switch (target.className) {
         case 'btn-start':
             setTimer(event);
+            break;
+
         case 'btn-start stop':
             setTimer(event);
+            break;
+
         case 'buttonDeleteProject':
             deleteProject(event);
+            break;
 
     }
 
