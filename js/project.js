@@ -15,6 +15,11 @@ class Project {
 const projects = {
     allProjects: []
 };
+chrome.storage.sync.get(['projects'], function(result) {
+    if (result.projects.allProjects.length !== 0) {
+        projects.allProjects = result.projects.allProjects;
+    }
+});
 
 // Add project
 function addProject(title) {
@@ -26,8 +31,6 @@ function addProject(title) {
         if (result.projects.allProjects.length !== 0) {
             ID = result.projects.allProjects[result.projects.allProjects.length - 1].id + 1;
         }
-
-        projects.allProjects = result.projects.allProjects;
 
         // Create a new instance
         const newProject = new Project(ID, title);
@@ -43,25 +46,38 @@ function addProject(title) {
 }
 
 // Update project title in data structure
-function updateTitle(newTitle, ID) {
+function updateTitle(event) {
+    const target = event.target;
+    const ID = parseInt(target.parentNode.id.slice(8));
 
-    // Find the object with matching ID
-    const projectToUpdate = projects.allProjects.find(project => project.id === ID);
+    let oldTitle = projects.allProjects.find(project => project.id === ID).title;
 
-    // Update the title
-    projectToUpdate.title = newTitle;
+    projects.allProjects.find(project => project.id === ID).title = newTitle;
 
+    // Saving projects
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
+        console.log('Changing the title of the project : old title : ' + oldTitle + "; new title : " + newTitle);
+    });
 }
 
 // Delete a project from data structure
-function deleteData(ID) {
+function deleteProject(event) {
+    const target = event.target;
+    const ID = parseInt(target.parentNode.id.slice(8));
 
-    const currentProject = projects.allProjects.map(current => current.id);
-    const index = currentProject.indexOf(ID);
-    if (index !== -1) {
-        projects.allProjects.splice(index, 1);
-    }
+    let index = projects.allProjects.findIndex(project => project.id === ID);
+    let title = projects.allProjects.find(project => project.id === ID).title;
 
+    projects.allProjects.splice(index, 1);
+
+    // Saving projects
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
+        console.log('Deleting project : ' + title);
+    });
 }
 
 function deleteAllProjects() {
@@ -91,15 +107,14 @@ function addProjectToUI(obj) {
             <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
         </div>
         <button class="btn-start" id="btn-start-${obj.id}">Start</button>
-        <button class="delete-btn" id="delete-btn-${obj.id}"><i class="fa fa-times"></i></button>
+        <input type="submit" value="Delete Project" id="buttonDeleteProject">
     </li>
     `;
 
     // Insert the HTML into the DOM
     document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
-    const ev_btn_start = document.getElementById(`btn-start-${obj.id}`);
-    ev_btn_start.addEventListener("click", setTimer);
 }
+
 
 // Affichage des projet qui existent deja lorsqu'on ouvre l'extension
 function initProjectDisplay() {
@@ -112,6 +127,58 @@ function initProjectDisplay() {
         }
     })
 }
+
+// ------------------------------------------------ //
+//             TIMER FUNCTIONS                      //
+// ------------------------------------------------ //
+
+var ev;
+// init the Timer where it needs to be
+function setTimer(event) {
+    target = event.target;
+
+    // If the button's text is start
+    if (target.textContent === 'Start') {
+        target.textContent = 'Stop';
+        startTimer(event);
+
+        // If the button's text is stop
+    } else if (target.textContent === 'Stop') {
+        target.textContent = 'Start';
+        stopTimer(event);
+
+    }
+}
+
+function startTimer(event) {
+
+    const target = event.target.previousElementSibling.lastElementChild;
+    const seconds = target.querySelector('.seconds');
+    const minutes = target.querySelector('.minutes');
+    const hours = target.querySelector('.hours');
+
+
+    let sec = parseInt(seconds.textContent);
+    intervalID = setInterval(() => {
+        sec++;
+        console.log(sec)
+        seconds.textContent = (`0${sec % 60}`).substr(-2);
+        minutes.textContent = (`0${(parseInt(sec / 60)) % 60}`).substr(-2);
+        hours.textContent = (`0${parseInt(sec / 3600)}`).substr(-2);
+
+        // need to save the data
+    }, 1000);
+
+    // Add interval ID to event target as an attribute
+    target.setAttribute('timer-id', intervalID);
+}
+
+// Stop the timer
+function stopTimer(event) {
+    const target = event.target.previousElementSibling.lastElementChild;
+    clearInterval(target.getAttribute('timer-id'));
+}
+
 
 
 // ------------------------------------------------ //
@@ -152,53 +219,21 @@ btnAddProj2.addEventListener("click", function(event) {
     document.getElementById("buttonAddProject").value = "";
 });
 
-// Deletion all projects
-document.getElementById("deleteAllProject").addEventListener("click", deleteAllProjects)
+// Function addEventListener for each project (delete proj, update, startTimer)
+document.addEventListener("click", function(event) {
+    const target = event.target;
+    if (target) {
+        switch (target.id) {
 
+            // changer delete project car ID 
+            case 'buttonDeleteProject':
+                deleteProject(event);
 
-
-// ------------------------------------------------ //
-//             DISPLAY FUNCTIONS                //
-// ------------------------------------------------ //
-
-var ev;
-// init the Timer where it needs to be
-function setTimer(event) {
-    ev = event.target;
-    var pj_id = event.target.id.substring('btn-start-'.length);
-    if (event.target.getAttribute('class') == 'btn-start') {
-        event.target.setAttribute('class', 'btn-stop');
-        event.target.innerHTML = 'Stop';
-
-        var start = Date.now();
-        dispTime(0, pj_id);
-        window['interval' + pj_id] = setInterval(function() {
-            var delta = Date.now() - start;
-            dispTime(delta, pj_id);
-        }, 1000); // update about every second
-    } else {
-        event.target.setAttribute('class', 'btn-start');
-        event.target.innerHTML = 'Start';
-        clearInterval(window['interval' + pj_id]);
+            case 'deleteAllProject':
+                deleteAllProjects(event);
+        }
+        if (target.className === 'btn-start' || target.className === 'btn-start stop') {
+            setTimer(event);
+        }
     }
-}
-
-// Display the timer in the right form
-function dispTime(time, pj_id) {
-    var t = Math.floor(time / 1000);
-    var hours = Math.floor(t / 3600);
-    t = t - hours * 3600;
-    var minutes = Math.floor(t / 60);
-    var seconds = t - minutes * 60;
-
-
-
-    htag = document.getElementById(`project-${pj_id}`).getElementsByClassName("hours")[0];
-    mtag = document.getElementById(`project-${pj_id}`).getElementsByClassName("minutes")[0];
-    stag = document.getElementById(`project-${pj_id}`).getElementsByClassName("seconds")[0];
-
-    htag.innerHTML = hours;
-    mtag.innerHTML = minutes;
-    stag.innerHTML = seconds;
-
-}
+});
