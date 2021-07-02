@@ -71,7 +71,7 @@ function saveNewTitle(event){
 
     inputText.type = "submit";
     inputText.value = "Change Project Title";
-    
+
     target.type = "hidden";
     target.nextElementSibling.type = "hidden";
 
@@ -79,6 +79,16 @@ function saveNewTitle(event){
     chrome.storage.sync.set({'projects': projects}, function() {
         console.log('New project title : ' + newTitle);
     });
+}
+
+function cancelTitleChanging(event){
+    const target = event.target;
+    const ID = parseInt(target.parentNode.id.slice(8));
+
+    target.previousElementSibling.type = "hidden"
+    target.previousElementSibling.previousElementSibling.value = "Change Project Title"
+    target.previousElementSibling.previousElementSibling.type = "submit"
+
 }
 
 
@@ -283,6 +293,9 @@ document.addEventListener("click", function(event) {
             break;
         case 'buttonChangeTitleValidation' :
             saveNewTitle(event);
+            break;
+        case 'buttonChangeTitleCancel' :
+            cancelTitleChanging(event);
             break;
     }
 
