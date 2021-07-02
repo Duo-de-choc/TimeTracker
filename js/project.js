@@ -4,6 +4,7 @@ class Project {
     constructor(id, title) {
         this.id = id;
         this.title = title;
+        this.backgroundColor = '';
         this.days = "00";
         this.hours = "00";
         this.minutes = "00";
@@ -26,6 +27,8 @@ function addProject(title) {
     // Getting the ID
     let ID = 0;
 
+    let colors = ['#e0e0e0', '#ff9b9b', '#9bfff2', '#9bd2ff', '#9bb2ff', '#ad9bff', '#ffdc9b']
+
     chrome.storage.sync.get(['projects'], function(result) {
         if (result.projects.allProjects.length !== 0) {
             ID = result.projects.allProjects[result.projects.allProjects.length - 1].id + 1;
@@ -33,6 +36,7 @@ function addProject(title) {
 
         // Create a new instance
         const newProject = new Project(ID, title);
+        newProject.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
 
         // Add the project to the project data
         projects.allProjects.push(newProject);
@@ -57,7 +61,6 @@ function updateTitle(event) {
     target.nextElementSibling.type = "submit";
     target.nextElementSibling.nextElementSibling.type = "submit";
 }
-
 
 function saveNewTitle(event){
     const target = event.target;
@@ -129,25 +132,129 @@ function testing() {
 function addProjectToUI(obj) {
 
     // Create markup
-    const html = `
-    <li id="project_${obj.id}">
+    let html = `
+    <project class=project_${obj.id} id="project_${obj.id}">
         <h2>${obj.title}</h2>
         <div class="timer">
-            <p class="timerLabel">Total Time Spent</p>
-            <p class="timerText"><span class="hours">${obj.hours}</span>:<span class="minutes">${obj.minutes}</span>:<span class="seconds">${obj.seconds}</span></p>
+            <p class="timerText">Time logged : <span class="hours">${obj.hours}</span>:<span class="minutes">${obj.minutes}</span>:<span class="seconds">${obj.seconds}</span></p>
         </div>
-        <button class="btnStart">Start</button>
+        <button class="btnStart" value="Start">Start</button>
 
         <input type="submit" value="Change Project Title" class="buttonChangeTitle">
         <input type="hidden" value="Validate" class="buttonChangeTitleValidation">
         <input type="hidden" value="Cancel" class="buttonChangeTitleCancel">
 
         <input type="submit" value="Delete Project" class="buttonDeleteProject">
-    </li>
+    </project>
     `;
 
+    let style = `
+    <style>
+    .project_${obj.id} {
+        display: grid;
+        margin: auto;
+        border: solid;
+        border-width: 5px;
+        border-color: #ffffff;
+        width: 90%;
+        height: 350px;
+        background: ${obj.backgroundColor};
+        border-radius: 50px;
+    }
+      
+    project > h2 {
+        display: grid;
+        margin: auto;   
+    }
+
+    project > div {
+        display: grid;
+        margin: auto; 
+    }
+
+    project > .btnStart[value='Start'] {
+        display: grid;
+        margin: auto; 
+        height: 15px;
+        width: 50px;
+        background: #c8ff9b;
+        border-radius: 20px;
+    }
+
+    project > .btnStart[value='Stop'] {
+        display: grid;
+        margin: auto; 
+        height: 15px;
+        width: 50px;
+        background: #fd5c5c;
+        border-radius: 20px;
+    }
+
+    .project_${obj.id} > .buttonChangeTitle[type="submit"] {
+        display: grid;
+        margin: auto; 
+        height: 20px;
+        width: 200px;
+        background: ${obj.backgroundColor};
+        border: solid;
+        border-color: #000000;
+        border-width: 2px;
+        border-radius: 20px;
+    }
+
+    project > .buttonChangeTitle[type="input"] {
+        display: grid;
+        margin: auto; 
+        height: 20px;
+        width: 200px;
+        background: #e6e5e5;
+        border: solid;
+        border-color: #000000;
+        border-width: 2px;
+        border-radius: 20px;
+    }
+
+    .project_${obj.id} > .buttonChangeTitleValidation{
+        display: grid;
+        margin: auto; 
+        height: 20px;
+        width: 200px;
+        background: ${obj.backgroundColor};
+        border: solid;
+        border-color: #000000;
+        border-width: 2px;
+        border-radius: 20px;
+    }
+
+    .project_${obj.id} > .buttonChangeTitleCancel{
+        display: grid;
+        margin: auto; 
+        height: 20px;
+        width: 200px;
+        background: ${obj.backgroundColor};
+        border: solid;
+        border-color: #000000;
+        border-width: 2px;
+        border-radius: 20px;
+    }
+
+    .project_${obj.id} > .buttonDeleteProject{
+        display: grid;
+        margin: auto; 
+        height: 20px;
+        width: 200px;
+        background: ${obj.backgroundColor};
+        border: solid;
+        border-color: #000000;
+        border-width: 2px;
+        border-radius: 20px;
+    }
+    
+    </style>
+    `
+
     // Insert the HTML into the DOM
-    document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
+    document.querySelector('.projects').insertAdjacentHTML('beforeend', html+style);
 }
 
 
@@ -175,11 +282,13 @@ function setTimer(event) {
     // If the button's text is start
     if (target.textContent === 'Start') {
         target.textContent = 'Stop';
+        target.value = 'Stop'
         startTimer(event);
 
         // If the button's text is stop
     } else if (target.textContent === 'Stop') {
         target.textContent = 'Start';
+        target.value = 'Start'
         stopTimer(event);
 
     }
