@@ -50,12 +50,33 @@ function updateTitle(event) {
     const ID = parseInt(target.parentNode.id.slice(8));
 
     let oldTitle = projects.allProjects.find(project => project.id === ID).title;
+    
+    target.type = "input";
+    target.value = oldTitle;
+
+    let btnValidation = target.nextElementSibling;
+    btnValidation.type = "submit";
+}
+
+
+function saveNewTitle(event){
+    const target = event.target;
+    const ID = parseInt(target.parentNode.id.slice(8));
+
+
+    let inputText = target.previousElementSibling;
+    let newTitle = inputText.value;
 
     projects.allProjects.find(project => project.id === ID).title = newTitle;
 
+    inputText.type = "submit";
+    inputText.value = "Change Project Title";
+
+    target.type = "hidden";
+    
     // Saving projects
     chrome.storage.sync.set({'projects': projects}, function() {
-        console.log('Changing the title of the project : old title : ' + oldTitle + "; new title : " + newTitle);
+        console.log('New project title : ' + newTitle);
     });
 }
 
@@ -104,7 +125,10 @@ function addProjectToUI(obj) {
             <p class="timerText"><span class="hours">${obj.hours}</span>:<span class="minutes">${obj.minutes}</span>:<span class="seconds">${obj.seconds}</span></p>
         </div>
         <button class="btnStart">Start</button>
+
         <input type="submit" value="Change Project Title" class="buttonChangeTitle">
+        <input type="hidden" value="Validate" class="buttonChangeTitleValidation">
+
         <input type="submit" value="Delete Project" class="buttonDeleteProject">
     </li>
     `;
@@ -125,7 +149,6 @@ function initProjectDisplay() {
         }
     })
 }
-
 
 
 // ------------------------------------------------ //
@@ -210,12 +233,12 @@ chrome.storage.sync.get(['projects'], function(result) {
 });
 
 // Function to add a project
-const btnAddProj2 = document.getElementById("buttonAddProject2");
-btnAddProj2.addEventListener("click", function(event) {
+document.getElementById("buttonAddProject2").addEventListener("click", function(event) {
     // Prevent default behavior
     event.preventDefault();
 
-    var title = document.getElementById("buttonAddProject").value;
+    btnAddProj = document.getElementById("buttonAddProject")
+    var title = btnAddProj.value;
 
     // If the input is not empty
     if (title !== '') {
@@ -231,7 +254,10 @@ btnAddProj2.addEventListener("click", function(event) {
             });
         });
     }
-    document.getElementById("buttonAddProject").value = "";
+    btnAddProj.value = "Add Project";
+    btnAddProj.type = "submit";
+
+    document.getElementById("buttonAddProject2").type = 'hidden';
 });
 
 // Function addEventListener for each project (delete proj, update, startTimer)
@@ -253,7 +279,9 @@ document.addEventListener("click", function(event) {
         case 'buttonChangeTitle':
             updateTitle(event);
             break;
-
+        case 'buttonChangeTitleValidation' :
+            saveNewTitle(event);
+            break;
     }
 
     switch (target.id) {
