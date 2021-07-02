@@ -54,9 +54,7 @@ function updateTitle(event) {
     projects.allProjects.find(project => project.id === ID).title = newTitle;
 
     // Saving projects
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function() {
+    chrome.storage.sync.set({'projects': projects}, function() {
         console.log('Changing the title of the project : old title : ' + oldTitle + "; new title : " + newTitle);
     });
 }
@@ -73,9 +71,7 @@ function deleteProject(event) {
     projects.allProjects.splice(index, 1);
 
     // Saving projects
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function() {
+    chrome.storage.sync.set({'projects': projects}, function() {
         console.log('Deleting project : ' + title);
     });
 }
@@ -83,9 +79,7 @@ function deleteProject(event) {
 function deleteAllProjects() {
     projects.allProjects = [];
     // Saving projects
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function() {
+    chrome.storage.sync.set({'projects': projects}, function() {
         console.log('Clearing all projects : size : ' + projects.allProjects.length);
     });
 }
@@ -192,9 +186,7 @@ function saveTime(ID, seconds, minutes, hours) {
     projects.allProjects.find(project => project.id == ID).hours = hours;
 
     // Saving projects
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function() {
+    chrome.storage.sync.set({'projects': projects}, function() {
         console.log('Changing the time of the project :' + hours + ':' + minutes + ':' + seconds);
     });
 }
@@ -225,9 +217,7 @@ function changeTitle(event) {
 
 // To use if wanted to shorten the code
 function saveProjectsToChrome(projects) {
-    chrome.storage.sync.set({
-        'projects': projects
-    }, function() {
+    chrome.storage.sync.set({'projects': projects}, function() {
         console.log('Projects saved');
     });
 }
@@ -266,9 +256,7 @@ btnAddProj2.addEventListener("click", function(event) {
             console.log('Number of project before adding :' + result.projects.allProjects.length);
 
             // Saving projects
-            chrome.storage.sync.set({
-                'projects': projects
-            }, function() {
+            chrome.storage.sync.set({'projects': projects}, function() {
                 console.log('projects is set to : project ID : ' + projects.allProjects[projects.allProjects.length - 1].id + "; project title : " + projects.allProjects[projects.allProjects.length - 1].title);
             });
         });
