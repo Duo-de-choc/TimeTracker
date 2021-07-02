@@ -249,7 +249,6 @@ function addProjectToUI(obj) {
         border-width: 2px;
         border-radius: 20px;
     }
-    
     </style>
     `
 
