@@ -4,10 +4,10 @@ class Project {
     constructor(id, title) {
         this.id = id;
         this.title = title;
-        this.days = 0;
-        this.hours = 0;
-        this.minutes = 0;
-        this.seconds = 0;
+        this.days = "00";
+        this.hours = "00";
+        this.minutes = "00";
+        this.seconds = "00";
     }
 }
 
@@ -15,7 +15,7 @@ class Project {
 const projects = {
     allProjects: []
 };
-chrome.storage.sync.get(['projects'], function (result) {
+chrome.storage.sync.get(['projects'], function(result) {
     if (result.projects.allProjects.length !== 0) {
         projects.allProjects = result.projects.allProjects;
     }
@@ -23,11 +23,10 @@ chrome.storage.sync.get(['projects'], function (result) {
 
 // Add project
 function addProject(title) {
-
     // Getting the ID
     let ID = 0;
 
-    chrome.storage.sync.get(['projects'], function (result) {
+    chrome.storage.sync.get(['projects'], function(result) {
         if (result.projects.allProjects.length !== 0) {
             ID = result.projects.allProjects[result.projects.allProjects.length - 1].id + 1;
         }
@@ -46,21 +45,26 @@ function addProject(title) {
 }
 
 // Update project title in data structure
-function updateTitle(newTitle, ID) {
+function updateTitle(event) {
+    const target = event.target;
+    const ID = parseInt(target.parentNode.id.slice(8));
+
     let oldTitle = projects.allProjects.find(project => project.id === ID).title;
-    
+
     projects.allProjects.find(project => project.id === ID).title = newTitle;
 
     // Saving projects
-    chrome.storage.sync.set({'projects': projects}, function () {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
         console.log('Changing the title of the project : old title : ' + oldTitle + "; new title : " + newTitle);
     });
 }
 
+
 // Delete a project from data structure
 function deleteProject(event) {
     const target = event.target;
-    const projectID = target.parentNode.id;
     const ID = parseInt(target.parentNode.id.slice(8));
 
     let index = projects.allProjects.findIndex(project => project.id === ID);
@@ -69,7 +73,9 @@ function deleteProject(event) {
     projects.allProjects.splice(index, 1);
 
     // Saving projects
-    chrome.storage.sync.set({'projects': projects}, function () {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
         console.log('Deleting project : ' + title);
     });
 }
@@ -77,7 +83,9 @@ function deleteProject(event) {
 function deleteAllProjects() {
     projects.allProjects = [];
     // Saving projects
-    chrome.storage.sync.set({'projects': projects}, function () {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
         console.log('Clearing all projects : size : ' + projects.allProjects.length);
     });
 }
@@ -85,6 +93,9 @@ function deleteAllProjects() {
 // Testing
 function testing() {
     console.log(projects);
+    chrome.storage.sync.get(['projects'], (data) => {
+        console.log(data.projects);
+    });
 }
 
 // Add project to UI
@@ -93,31 +104,24 @@ function addProjectToUI(obj) {
     // Create markup
     const html = `
     <li id="project-${obj.id}">
-        <h2>${obj.title}</h2>
+        <h2 class='title-Proj'>${obj.title}</h2>
         <div class="timer">
             <p class="timer-label">Total Time Spent</p>
-            <p class="timer-text"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></p>
+            <p class="timer-text"><span class="hours">${obj.hours}</span>:<span class="minutes">${obj.minutes}</span>:<span class="seconds">${obj.seconds}</span></p>
         </div>
-        <button class="btn-start" id="btn-start-${obj.id}">Start</button>
-        <input type="submit" value="Delete Project" id="buttonDeleteProject_${obj.id}">
+        <button class="btn-start">Start</button>
+        <input type="submit" value="Delete Project" class="buttonDeleteProject">
     </li>
     `;
 
     // Insert the HTML into the DOM
     document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
-
-    // Start timer
-    document.getElementById(`btn-start-${obj.id}`).addEventListener("click", setTimer);
-
-    // Delete a project 
-    document.getElementById(`buttonDeleteProject_${obj.id}`).addEventListener("click", deleteProject)
-
 }
 
 
 // Affichage des projet qui existent deja lorsqu'on ouvre l'extension
 function initProjectDisplay() {
-    chrome.storage.sync.get(['projects'], function (result) {
+    chrome.storage.sync.get(['projects'], function(result) {
         if (result.projects.allProjects.length !== 0) {
             for (let i = 0; i < result.projects.allProjects.length; i++) {
                 var proj_tmp = result.projects.allProjects[i];
@@ -127,46 +131,105 @@ function initProjectDisplay() {
     })
 }
 
+
+
 // ------------------------------------------------ //
 //             TIMER FUNCTIONS                      //
 // ------------------------------------------------ //
 
-var ev;
 // init the Timer where it needs to be
 function setTimer(event) {
-    ev = event.target;
-    var pj_id = event.target.id.substring('btn-start-'.length);
-    if (event.target.getAttribute('class') == 'btn-start') {
-        event.target.setAttribute('class', 'btn-stop');
-        event.target.innerHTML = 'Stop';
+    target = event.target;
 
-        var start = Date.now();
-        dispTime(0, pj_id);
-        window['interval' + pj_id] = setInterval(function () {
-            var delta = Date.now() - start;
-            dispTime(delta, pj_id);
-        }, 1000); // update about every second
-    } else {
-        event.target.setAttribute('class', 'btn-start');
-        event.target.innerHTML = 'Start';
-        clearInterval(window['interval' + pj_id]);
+    // If the button's text is start
+    if (target.textContent === 'Start') {
+        target.textContent = 'Stop';
+        startTimer(event);
+
+        // If the button's text is stop
+    } else if (target.textContent === 'Stop') {
+        target.textContent = 'Start';
+        stopTimer(event);
+
     }
 }
 
-// Display the timer in the right form
-function dispTime(time, pj_id) {
-    var t = Math.floor(time / 1000);
-    var hours = Math.floor(t / 3600);
-    t = t - hours * 3600;
-    var minutes = Math.floor(t / 60);
-    var seconds = t - minutes * 60;
+// Start timer and recover the data from chrome
+function startTimer(event) {
+    const prj_id = event.target.parentNode.id.slice(8);
+    const target = event.target.previousElementSibling.lastElementChild;
 
-    htag = document.getElementById(`project-${pj_id}`).getElementsByClassName("hours")[0];
-    mtag = document.getElementById(`project-${pj_id}`).getElementsByClassName("minutes")[0];
-    stag = document.getElementById(`project-${pj_id}`).getElementsByClassName("seconds")[0];
-    htag.innerHTML = hours;
-    mtag.innerHTML = minutes;
-    stag.innerHTML = seconds;
+    // get time tags
+    const seconds = target.querySelector('.seconds');
+    const minutes = target.querySelector('.minutes');
+    const hours = target.querySelector('.hours');
+
+    // get time values stored in chrome
+    seconds.textContent = projects.allProjects.find(project => project.id == prj_id).seconds;
+    minutes.textContent = projects.allProjects.find(project => project.id == prj_id).minutes;
+    hours.textContent = projects.allProjects.find(project => project.id == prj_id).hours;
+
+    // changing time loop with save
+    let sec = parseInt(seconds.textContent) + 60 * parseInt(minutes.textContent) + 3600 * parseInt(hours.textContent);
+    intervalID = setInterval(() => {
+        sec++;
+        seconds.textContent = (`0${sec % 60}`).substr(-2);
+        minutes.textContent = (`0${(parseInt(sec / 60)) % 60}`).substr(-2);
+        hours.textContent = (`0${parseInt(sec / 3600)}`).substr(-2);
+
+        saveTime(prj_id, seconds.textContent, minutes.textContent, hours.textContent);
+    }, 1000);
+
+    // Add interval ID to event target as an attribute
+    target.setAttribute('timer-id', intervalID);
+}
+
+
+// save time in project
+function saveTime(ID, seconds, minutes, hours) {
+    projects.allProjects.find(project => project.id == ID).seconds = seconds;
+    projects.allProjects.find(project => project.id == ID).minutes = minutes;
+    projects.allProjects.find(project => project.id == ID).hours = hours;
+
+    // Saving projects
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
+        console.log('Changing the time of the project :' + hours + ':' + minutes + ':' + seconds);
+    });
+}
+
+// Stop the timer
+function stopTimer(event) {
+    const target = event.target.previousElementSibling.lastElementChild;
+    clearInterval(target.getAttribute('timer-id'));
+}
+
+
+
+// ------------------------------------------------ //
+//             Change title                      //
+// ------------------------------------------------ //
+
+// Change Title mais pas la bonne font et ne save pas dans projects
+function changeTitle(event) {
+    const input = document.createElement('input');
+    const title = event.target;
+    const parent = title.parentNode;
+    input.value = title.textContent;
+    parent.insertBefore(input, title);
+    parent.removeChild(title);
+
+}
+
+
+// To use if wanted to shorten the code
+function saveProjectsToChrome(projects) {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
+        console.log('Projects saved');
+    });
 }
 
 
@@ -177,13 +240,13 @@ function dispTime(time, pj_id) {
 initProjectDisplay();
 
 // debugging print
-chrome.storage.sync.get(['projects'], function (result) {
+chrome.storage.sync.get(['projects'], function(result) {
     console.log('Number of project init :' + result.projects.allProjects.length);
 });
 
 // Function to add a project
 const btnAddProj2 = document.getElementById("buttonAddProject2");
-btnAddProj2.addEventListener("click", function (event) {
+btnAddProj2.addEventListener("click", function(event) {
     // Prevent default behavior
     event.preventDefault();
 
@@ -194,11 +257,13 @@ btnAddProj2.addEventListener("click", function (event) {
         // Add the project to the data controller
         addProject(title);
 
-        chrome.storage.sync.get(['projects'], function (result) {
+        chrome.storage.sync.get(['projects'], function(result) {
             console.log('Number of project before adding :' + result.projects.allProjects.length);
 
             // Saving projects
-            chrome.storage.sync.set({'projects': projects}, function () {
+            chrome.storage.sync.set({
+                'projects': projects
+            }, function() {
                 console.log('projects is set to : project ID : ' + projects.allProjects[projects.allProjects.length - 1].id + "; project title : " + projects.allProjects[projects.allProjects.length - 1].title);
             });
         });
@@ -206,5 +271,30 @@ btnAddProj2.addEventListener("click", function (event) {
     document.getElementById("buttonAddProject").value = "";
 });
 
-// Deletion all projects
-document.getElementById("deleteAllProject").addEventListener("click", deleteAllProjects)
+// Function addEventListener for each project (delete proj, update, startTimer)
+document.addEventListener("click", function(event) {
+    const target = event.target;
+    switch (target.className) {
+        case 'btn-start':
+            setTimer(event);
+            break;
+
+        case 'btn-start stop':
+            setTimer(event);
+            break;
+
+        case 'buttonDeleteProject':
+            deleteProject(event);
+            break;
+
+        case 'title-Proj':
+            changeTitle(event);
+            break;
+
+    }
+
+    switch (target.id) {
+        case 'deleteAllProject':
+            deleteAllProjects(event);
+    }
+});
