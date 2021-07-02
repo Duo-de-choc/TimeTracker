@@ -92,7 +92,9 @@ function deleteProject(event) {
     projects.allProjects.splice(index, 1);
 
     // Saving projects
-    chrome.storage.sync.set({'projects': projects}, function() {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
         console.log('Deleting project : ' + title);
     });
 }
@@ -100,7 +102,9 @@ function deleteProject(event) {
 function deleteAllProjects() {
     projects.allProjects = [];
     // Saving projects
-    chrome.storage.sync.set({'projects': projects}, function() {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
         console.log('Clearing all projects : size : ' + projects.allProjects.length);
     });
 }
@@ -137,7 +141,6 @@ function addProjectToUI(obj) {
     document.querySelector('.projects').insertAdjacentHTML('beforeend', html);
 }
 
-
 // Affichage des projet qui existent deja lorsqu'on ouvre l'extension
 function initProjectDisplay() {
     chrome.storage.sync.get(['projects'], function(result) {
@@ -150,10 +153,9 @@ function initProjectDisplay() {
     })
 }
 
-
-// ------------------------------------------------ //
-//             TIMER FUNCTIONS                      //
-// ------------------------------------------------ //
+// ------------------------------------------------
+//             TIMER FUNCTIONS
+// ------------------------------------------------
 
 // init the Timer where it needs to be
 function setTimer(event) {
@@ -192,7 +194,7 @@ function startTimer(event) {
     intervalID = setInterval(() => {
         sec++;
         seconds.textContent = (`0${sec % 60}`).substr(-2);
-        minutes.textContent = (`0${(parseInt(sec / 60)) % 60}`).substr(-2);
+        minutes.textContent = (`0${ (parseInt(sec / 60)) % 60}`).substr(-2);
         hours.textContent = (`0${parseInt(sec / 3600)}`).substr(-2);
 
         saveTime(prjId, seconds.textContent, minutes.textContent, hours.textContent);
@@ -202,7 +204,6 @@ function startTimer(event) {
     target.setAttribute('timerId', intervalID);
 }
 
-
 // save time in project
 function saveTime(ID, seconds, minutes, hours) {
     projects.allProjects.find(project => project.id == ID).seconds = seconds;
@@ -210,7 +211,9 @@ function saveTime(ID, seconds, minutes, hours) {
     projects.allProjects.find(project => project.id == ID).hours = hours;
 
     // Saving projects
-    chrome.storage.sync.set({'projects': projects}, function() {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
         console.log('Changing the time of the project :' + hours + ':' + minutes + ':' + seconds);
     });
 }
@@ -221,9 +224,9 @@ function stopTimer(event) {
     clearInterval(target.getAttribute('timerId'));
 }
 
-// ------------------------------------------------ //
-//             BEGINING OF THE CODE                 //
-// ------------------------------------------------ //
+// ------------------------------------------------
+//             BEGINING OF THE CODE
+// ------------------------------------------------
 
 initProjectDisplay();
 
@@ -249,7 +252,9 @@ document.getElementById("buttonAddProject2").addEventListener("click", function(
             console.log('Number of project before adding :' + result.projects.allProjects.length);
 
             // Saving projects
-            chrome.storage.sync.set({'projects': projects}, function() {
+            chrome.storage.sync.set({
+                'projects': projects
+            }, function() {
                 console.log('projects is set to : project ID : ' + projects.allProjects[projects.allProjects.length - 1].id + "; project title : " + projects.allProjects[projects.allProjects.length - 1].title);
             });
         });
@@ -279,7 +284,7 @@ document.addEventListener("click", function(event) {
         case 'buttonChangeTitle':
             updateTitle(event);
             break;
-        case 'buttonChangeTitleValidation' :
+        case 'buttonChangeTitleValidation':
             saveNewTitle(event);
             break;
     }
