@@ -198,31 +198,6 @@ function stopTimer(event) {
     clearInterval(target.getAttribute('timerId'));
 }
 
-
-
-// ------------------------------------------------ //
-//             Change title                      //
-// ------------------------------------------------ //
-
-// Change Title mais pas la bonne font et ne save pas dans projects
-function changeTitle(event) {
-    const input = document.createElement('input');
-    const title = event.target;
-    const parent = title.parentNode;
-    input.value = title.textContent;
-    parent.insertBefore(input, title);
-    parent.removeChild(title);
-
-}
-
-
-// To use if wanted to shorten the code
-function saveProjectsToChrome(projects) {
-    chrome.storage.sync.set({'projects': projects}, function() {
-        console.log('Projects saved');
-    });
-}
-
 // ------------------------------------------------ //
 //             BEGINING OF THE CODE                 //
 // ------------------------------------------------ //
