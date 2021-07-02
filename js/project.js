@@ -85,6 +85,7 @@ function cancelTitleChanging(event){
     const target = event.target;
     const ID = parseInt(target.parentNode.id.slice(8));
 
+    target.type = "hidden"
     target.previousElementSibling.type = "hidden"
     target.previousElementSibling.previousElementSibling.value = "Change Project Title"
     target.previousElementSibling.previousElementSibling.type = "submit"
