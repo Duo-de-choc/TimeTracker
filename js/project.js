@@ -54,8 +54,8 @@ function updateTitle(event) {
     target.type = "input";
     target.value = oldTitle;
 
-    let btnValidation = target.nextElementSibling;
-    btnValidation.type = "submit";
+    target.nextElementSibling.type = "submit";
+    target.nextElementSibling.nextElementSibling.type = "submit";
 }
 
 
@@ -71,9 +71,10 @@ function saveNewTitle(event){
 
     inputText.type = "submit";
     inputText.value = "Change Project Title";
-
-    target.type = "hidden";
     
+    target.type = "hidden";
+    target.nextElementSibling.type = "hidden";
+
     // Saving projects
     chrome.storage.sync.set({'projects': projects}, function() {
         console.log('New project title : ' + newTitle);
@@ -128,6 +129,7 @@ function addProjectToUI(obj) {
 
         <input type="submit" value="Change Project Title" class="buttonChangeTitle">
         <input type="hidden" value="Validate" class="buttonChangeTitleValidation">
+        <input type="hidden" value="Cancel" class="buttonChangeTitleCancel">
 
         <input type="submit" value="Delete Project" class="buttonDeleteProject">
     </li>
