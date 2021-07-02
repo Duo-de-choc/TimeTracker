@@ -98,12 +98,13 @@ function addProjectToUI(obj) {
     // Create markup
     const html = `
     <li id="project_${obj.id}">
-        <h2 class='titleProj'>${obj.title}</h2>
+        <h2>${obj.title}</h2>
         <div class="timer">
             <p class="timerLabel">Total Time Spent</p>
             <p class="timerText"><span class="hours">${obj.hours}</span>:<span class="minutes">${obj.minutes}</span>:<span class="seconds">${obj.seconds}</span></p>
         </div>
         <button class="btnStart">Start</button>
+        <input type="submit" value="Change Project Title" class="buttonChangeTitle">
         <input type="submit" value="Delete Project" class="buttonDeleteProject">
     </li>
     `;
@@ -222,12 +223,6 @@ function saveProjectsToChrome(projects) {
     });
 }
 
-// Stop the timer
-function stopTimer(event) {
-    const target = event.target.previousElementSibling.lastElementChild;
-    clearInterval(target.getAttribute('timerId'));
-}
-
 // ------------------------------------------------ //
 //             BEGINING OF THE CODE                 //
 // ------------------------------------------------ //
@@ -280,8 +275,8 @@ document.addEventListener("click", function(event) {
             deleteProject(event);
             break;
 
-        case 'titleProj':
-            changeTitle(event);
+        case 'buttonChangeTitle':
+            updateTitle(event);
             break;
 
     }
