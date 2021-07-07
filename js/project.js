@@ -27,7 +27,15 @@ function addProject(title) {
     // Getting the ID
     let ID = 0;
 
-    let colors = ['#e0e0e0', '#ff9b9b', '#9bfff2', '#9bd2ff', '#9bb2ff', '#ad9bff', '#ffdc9b']
+    let colors = [
+        '#e0e0e0',
+        '#ff9b9b',
+        '#9bfff2',
+        '#9bd2ff',
+        '#9bb2ff',
+        '#ad9bff',
+        '#ffdc9b'
+    ]
 
     chrome.storage.sync.get(['projects'], function(result) {
         if (result.projects.allProjects.length !== 0) {
@@ -54,7 +62,7 @@ function updateTitle(event) {
     const ID = parseInt(target.parentNode.id.slice(8));
 
     let oldTitle = projects.allProjects.find(project => project.id === ID).title;
-    
+
     target.type = "input";
     target.value = oldTitle;
 
@@ -62,10 +70,9 @@ function updateTitle(event) {
     target.nextElementSibling.nextElementSibling.type = "submit";
 }
 
-function saveNewTitle(event){
+function saveNewTitle(event) {
     const target = event.target;
     const ID = parseInt(target.parentNode.id.slice(8));
-
 
     let inputText = target.previousElementSibling;
     let newTitle = inputText.value;
@@ -79,12 +86,14 @@ function saveNewTitle(event){
     target.nextElementSibling.type = "hidden";
 
     // Saving projects
-    chrome.storage.sync.set({'projects': projects}, function() {
+    chrome.storage.sync.set({
+        'projects': projects
+    }, function() {
         console.log('New project title : ' + newTitle);
     });
 }
 
-function cancelTitleChanging(event){
+function cancelTitleChanging(event) {
     const target = event.target;
     const ID = parseInt(target.parentNode.id.slice(8));
 
@@ -94,7 +103,6 @@ function cancelTitleChanging(event){
     target.previousElementSibling.previousElementSibling.type = "submit"
 
 }
-
 
 // Delete a project from data structure
 function deleteProject(event) {
@@ -112,6 +120,11 @@ function deleteProject(event) {
     }, function() {
         console.log('Deleting project : ' + title);
     });
+
+    // soit ça :
+    event.target.parentNode.remove();
+    // soit ça :
+    // location.reload();
 }
 
 function deleteAllProjects() {
@@ -165,20 +178,20 @@ function addProjectToUI(obj) {
         background: ${obj.backgroundColor};
         border-radius: 50px;
     }
-      
+
     project > h2 {
         display: grid;
-        margin: auto;   
+        margin: auto;
     }
 
     project > div {
         display: grid;
-        margin: auto; 
+        margin: auto;
     }
 
     project > .btnStart[value='Start'] {
         display: grid;
-        margin: auto; 
+        margin: auto;
         height: 15px;
         width: 50px;
         background: #c8ff9b;
@@ -187,7 +200,7 @@ function addProjectToUI(obj) {
 
     project > .btnStart[value='Stop'] {
         display: grid;
-        margin: auto; 
+        margin: auto;
         height: 15px;
         width: 50px;
         background: #fd5c5c;
@@ -196,7 +209,7 @@ function addProjectToUI(obj) {
 
     .project_${obj.id} > .buttonChangeTitle[type="submit"] {
         display: grid;
-        margin: auto; 
+        margin: auto;
         height: 20px;
         width: 200px;
         background: ${obj.backgroundColor};
@@ -208,7 +221,7 @@ function addProjectToUI(obj) {
 
     project > .buttonChangeTitle[type="input"] {
         display: grid;
-        margin: auto; 
+        margin: auto;
         height: 20px;
         width: 200px;
         background: #e6e5e5;
@@ -220,7 +233,7 @@ function addProjectToUI(obj) {
 
     .project_${obj.id} > .buttonChangeTitleValidation{
         display: grid;
-        margin: auto; 
+        margin: auto;
         height: 20px;
         width: 200px;
         background: ${obj.backgroundColor};
@@ -232,7 +245,7 @@ function addProjectToUI(obj) {
 
     .project_${obj.id} > .buttonChangeTitleCancel{
         display: grid;
-        margin: auto; 
+        margin: auto;
         height: 20px;
         width: 200px;
         background: ${obj.backgroundColor};
@@ -244,7 +257,7 @@ function addProjectToUI(obj) {
 
     .project_${obj.id} > .buttonDeleteProject{
         display: grid;
-        margin: auto; 
+        margin: auto;
         height: 20px;
         width: 200px;
         background: ${obj.backgroundColor};
@@ -253,12 +266,12 @@ function addProjectToUI(obj) {
         border-width: 2px;
         border-radius: 20px;
     }
-    
+
     </style>
     `
 
     // Insert the HTML into the DOM
-    document.querySelector('.projects').insertAdjacentHTML('beforeend', html+style);
+    document.querySelector('.projects').insertAdjacentHTML('beforeend', html + style);
 }
 
 // Affichage des projet qui existent deja lorsqu'on ouvre l'extension
@@ -409,7 +422,7 @@ document.addEventListener("click", function(event) {
         case 'buttonChangeTitleValidation':
             saveNewTitle(event);
             break;
-        case 'buttonChangeTitleCancel' :
+        case 'buttonChangeTitleCancel':
             cancelTitleChanging(event);
             break;
     }
