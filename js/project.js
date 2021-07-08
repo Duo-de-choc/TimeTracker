@@ -249,7 +249,7 @@ function addProjectToUI(obj) {
         border-width: 2px;
         border-radius: 20px;
     }
-    
+
     </style>
     `
 
@@ -270,7 +270,7 @@ function initProjectDisplay() {
     })
 }
 
-
+/*
 // ------------------------------------------------ //
 //             TIMER FUNCTIONS                      //
 // ------------------------------------------------ //
@@ -342,7 +342,7 @@ function stopTimer(event) {
     const target = event.target.previousElementSibling.lastElementChild;
     clearInterval(target.getAttribute('timerId'));
 }
-
+*/
 // ------------------------------------------------ //
 //             BEGINING OF THE CODE                 //
 // ------------------------------------------------ //
@@ -386,13 +386,13 @@ document.getElementById("buttonAddProject2").addEventListener("click", function(
 document.addEventListener("click", function(event) {
     const target = event.target;
     switch (target.className) {
-        case 'btnStart':
+        /*case 'btnStart':
             setTimer(event);
             break;
 
         case 'btnStart stop':
             setTimer(event);
-            break;
+            break;*/
 
         case 'buttonDeleteProject':
             deleteProject(event);

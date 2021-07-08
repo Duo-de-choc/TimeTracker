@@ -12,5 +12,12 @@
         "default_popup": "popup.html"
     },
 
+    "background": {
+        "scripts": [
+            "./js/backgroundTimer.js"
+        ],
+        "persistent": true
+    },
+
     "permissions": ["storage"]
 }
