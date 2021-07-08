@@ -70,6 +70,10 @@ function stopTimer(event) {
     clearInterval(target.getAttribute('timerId'));
 }
 
+// ------------------------------------------------ //
+//             BEGINING OF THE CODE                 //
+// ------------------------------------------------ //
+
 document.addEventListener("click", function(event) {
     const target = event.target;
     switch (target.className) {
